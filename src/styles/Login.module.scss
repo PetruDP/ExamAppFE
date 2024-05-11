@@ -1,0 +1,36 @@
+@import "./ct.scss";
+
+div.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+
+    .paper {
+        overflow: hidden;
+        form {
+            padding: 1rem 3rem;
+            display: flex;
+            flex-direction: column;
+
+            @media (width <=$br-phone) {
+                padding: 1rem;
+            }
+
+            >h1 {
+                text-align: center;
+                margin: .5rem 0 2rem 0;
+            }
+
+            >button {
+                width: fit-content;
+                align-self: center;
+                margin: .5rem 0;
+            }
+
+            >p:nth-of-type(1) {
+                margin: .5rem 0 2.5rem 0;
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+header.app-header {
+    padding: .5rem 1rem;
+
+    >div {
+        display: flex;
+        align-items: center;
+        max-width: 70rem;
+        margin: 0 auto;
+
+        .link {
+            &:global(.active) {
+                .icon {
+                    color: inherit;
+                }
+            }
+        }
+
+        nav {
+            margin-left: auto;
+        }
+    }
+}
+
+.nav-menu {
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+}

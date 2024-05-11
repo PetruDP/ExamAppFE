@@ -1,0 +1,26 @@
+@import "./ct.scss";
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-family: $font-family;
+    font-size: $font-size;
+}
+
+body {
+    background-color: $th-background;
+    color: $th-text;
+}
+
+a, button {
+    cursor: pointer;
+    user-select: none;
+}
+
