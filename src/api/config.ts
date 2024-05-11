@@ -1,26 +1,24 @@
 import { store } from "../app/store";
 
-const { auth } = store.getState();
-
 let baseUrl: string = "http://localhost:3001";
+
+type ReqWithAuth = (url: string, init?: RequestInit) => Request;
 /**
  * Returns a `Request` object that includes authorization for protected routes
  */
-let baseRequest: (url: string) => Request = (url: string) => new Request(url, {
-    headers: {
-        "Authorization": `Bearer ${auth.auth.token}`
-    },
-    credentials: "include"
-})
-
-if (import.meta.env.PROD) {
-    baseUrl = "";
-    baseRequest = (url) => new Request(url, {
+const reqWithAuth: ReqWithAuth = (url, init) => {
+    const { auth } = store.getState();
+    return new Request(url, {
         headers: {
             "Authorization": `Bearer ${auth.auth.token}`
         },
-        credentials: "include"
+        credentials: "include",
+        ...init
     })
 }
 
-export { baseRequest, baseUrl };
+if (import.meta.env.PROD) {
+    baseUrl = "";
+}
+
+export { reqWithAuth, baseUrl };

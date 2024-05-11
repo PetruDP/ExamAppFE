@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button, Tooltip, ButtonProps, Snackbar, IconButton } from "@mui/material";
+import {
+    Button,
+    Tooltip,
+    ButtonProps,
+    Snackbar,
+    Alert,
+} from "@mui/material";
 import { useFetchWrapper } from "../../api/useFetchWrapper";
 import { POSTAddMovie } from "../../api/api";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CloseIcon from '@mui/icons-material/Close';
 
 type Props = {
     btnProps?: ButtonProps;
@@ -11,43 +16,27 @@ type Props = {
 };
 
 export default function AddMovieToListBtn({ btnProps, id }: Props) {
-    const [successSnack, setSuccessSnack] = useState(false);
+    const [snack, setSnack] = useState({
+        success: false,
+        error: false
+    });
     const { error, data, trigger } = useFetchWrapper<{
         status: number;
         ok: boolean;
     }>();
 
     useEffect(() => {
-        if(data?.ok) setSuccessSnack(true);
-    }, [data]);
+        if (data?.ok) setSnack((p) => ({ ...p, success: true }));
+        if (error) setSnack((p) => ({ ...p, error: true }));
+    }, [data, error]);
 
     function handleAddMovie() {
         trigger(() => POSTAddMovie({ id }));
     }
 
-    function handleCloseSnackbar(){
-        setSuccessSnack(false);
+    function handleCloseSnackbar(type: keyof typeof snack) {
+        setSnack((p) => ({ ...p, [type]: false }));
     }
-
-    const action = (
-        <>
-            <Button
-                color="secondary"
-                size="small"
-                onClick={handleCloseSnackbar}
-            >
-                UNDO
-            </Button>
-            <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleCloseSnackbar}
-            >
-                <CloseIcon fontSize="small" />
-            </IconButton>
-        </>
-    );
 
     return (
         <>
@@ -64,16 +53,32 @@ export default function AddMovieToListBtn({ btnProps, id }: Props) {
             </Tooltip>
             <Snackbar
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                open={Boolean(error)}
-                message={error}
+                open={snack.error}
                 autoHideDuration={5000}
-            />
-            <Snackbar 
-                action={action}
+                onClose={() => handleCloseSnackbar("error")}
+            >
+                <Alert
+                    onClose={() => handleCloseSnackbar("error")}
+                    severity="error"
+                    variant="filled"
+                >
+                    {error}
+                </Alert>
+            </Snackbar>
+            <Snackbar
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                open={successSnack}
-                message={"Movie added succesfully!"}
-            />
+                open={snack.success}
+                autoHideDuration={5000}
+                onClose={() => handleCloseSnackbar("success")}
+            >
+                <Alert
+                    onClose={() => handleCloseSnackbar("success")}
+                    severity="success"
+                    variant="filled"
+                >
+                    Movie added succesfully!
+                </Alert>
+            </Snackbar>
         </>
     );
 }

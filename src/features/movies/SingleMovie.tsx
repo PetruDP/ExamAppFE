@@ -10,7 +10,8 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Divider
+    Divider,
+    Tooltip,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { MovieI } from "../../types/types";
@@ -66,10 +67,14 @@ export default function SingleMovie() {
                     </a>
                     <p className={s.year}>
                         Rating {movie.rating}
-                        &nbsp; &#8226; &nbsp; 
-                        Year {movie.year}
-                        &nbsp; &#8226; &nbsp; 
-                        <a href={movie.link} target="_blank">IMDB</a>
+                        &nbsp; &#8226; &nbsp; Year {movie.year}
+                        &nbsp; &#8226; &nbsp;
+                        <a
+                            href={movie.link}
+                            target="_blank"
+                        >
+                            IMDB
+                        </a>
                     </p>
                     <div className={s.genres}>
                         {movie.genre.map((el) => (
@@ -92,9 +97,12 @@ export default function SingleMovie() {
                         title="Main Actors"
                         el={movie.Stars}
                     />
-                    <p className={s.synopsis}>{movie.description}</p>
+                    <div className={s.synopsis}>
+                        <p>Synopsis</p>
+                        <p>{movie.description}</p>
+                    </div>
                     <Divider />
-                    <AddMovieToListBtn id={movie.id}/>
+                    <AddMovieToListBtn id={movie.id} />
                 </Paper>
             </>
         );
@@ -118,12 +126,21 @@ function AccordionGenerator({ title, el }: { title: string; el: string[] }) {
                 }}
             >
                 {el.map((el) => (
-                    <p
+                    <Tooltip
+                        title="Click to open search on Google"
                         key={`${el}-${title}`}
-                        style={{ margin: ".5rem 0" }}
                     >
-                        {el}
-                    </p>
+                        <a
+                            href={`https://www.google.com/search?q=${el}`}
+                            target="_blank"
+                            // style={{ display: "block", width: "fit-content" }}
+                            // Above line makes the tooltip appear on the center of the text
+                            // But doing this will make the bellow link harder to select
+                            // Because the tooltip sits on top of it
+                        >
+                            <p style={{ margin: ".5rem 0", width: "fit-content" }}>{el}</p>
+                        </a>
+                    </Tooltip>
                 ))}
             </AccordionDetails>
         </Accordion>

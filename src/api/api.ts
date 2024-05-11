@@ -1,8 +1,8 @@
 import { store } from "../app/store";
 import { setMoviesList } from "../features/movies/moviesSlice";
 import { setToken } from "../features/auth/authSlice";
-import { baseUrl } from "./config"
-import { delay } from "./delay";
+import { baseUrl, reqWithAuth } from "./config"
+// import { delay } from "./delay";
 
 export const GETMovies = async () => {
     const res = await fetch(`${baseUrl}/movies`);
@@ -41,9 +41,26 @@ export const POSTLogin = async (payload: Login_Register_Payload) => {
 // TBD
 export const POSTAddMovie = async (payload: { id: string }) => {
     console.log(payload);
-    const res = await fetch(`${baseUrl}/movies`);
-    await delay(1);
+    const req = reqWithAuth(`${baseUrl}/movies`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+    const res = await fetch(req);
     const json = await res.json();
     console.log(json);
     return { status: res.status, ok: res.ok }
+}
+
+// Read user
+export const GETUser = async (payload: { username: string }) => {
+    const req = reqWithAuth(`${baseUrl}/user/profile/${payload.username}`);
+    const res = await fetch(req);
+    return await res.json();
+}
+
+// Read All Users --> ONly ADMIN
+export const GETUsers = async () => {
+    const req = reqWithAuth(`${baseUrl}/admin/getUsers`);
+    const res = await fetch(req);
+    return await res.json();
 }

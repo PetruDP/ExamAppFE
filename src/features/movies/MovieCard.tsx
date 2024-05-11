@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { Paper, Skeleton } from "@mui/material";
 import { MovieI } from "../../types/types";
 import { ImgSizes } from "../../types/constants";
-import StarRateIcon from "@mui/icons-material/StarRate";
 import AddMovieToListBtn from "../user/AddMovieToListBtn";
 
 type Props = {
@@ -50,11 +49,19 @@ const MovieCard = React.memo(({ movie }: Props) => {
                     <p>{movie.title}</p>
                 </Link>
                 <div>
-                    <StarRateIcon />
-                    <p>{movie.rating}</p>
-                    <a href={movie.link}>IMDB</a>
+                    <p>
+                        Rating {movie.rating}
+                        &nbsp; &#8226; &nbsp; Year {movie.year}
+                        &nbsp; &#8226; &nbsp;
+                        <a
+                            href={movie.link}
+                            target="_blank"
+                        >
+                            IMDB
+                        </a>
+                    </p>
                 </div>
-                <AddMovieToListBtn id={movie.id}/>
+                <AddMovieToListBtn id={movie.id} />
             </div>
         </Paper>
     );
