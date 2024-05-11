@@ -1,10 +1,11 @@
 import s from "../../styles/MoviesList.module.scss";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Paper, Skeleton } from "@mui/material";
 import { MovieI } from "../../types/types";
 import { ImgSizes } from "../../types/constants";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import AddMovieToListBtn from "../user/AddMovieToListBtn";
 
 type Props = {
     movie: MovieI;
@@ -12,14 +13,14 @@ type Props = {
 
 const imgIndex: 0 | 1 | 2 = 1;
 
-export default function MovieCard({ movie }: Props) {
+const MovieCard = React.memo(({ movie }: Props) => {
     const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = useState(false);
     return (
         <Paper
             className={s["movie-card"]}
             elevation={4}
-            sx={{ width: `${movie.images[imgIndex][0]}px` }}
+            sx={{ width: `${movie.images[imgIndex].width}px` }}
         >
             <div className={s["image"]}>
                 {!imgLoaded && (
@@ -31,7 +32,7 @@ export default function MovieCard({ movie }: Props) {
                     />
                 )}
                 <img
-                    src={movie.images[imgIndex][1]}
+                    src={movie.images[imgIndex].image}
                     alt="Not Found"
                     loading="lazy"
                     onLoad={() => setImgLoaded(true)}
@@ -40,7 +41,7 @@ export default function MovieCard({ movie }: Props) {
                         visibility: imgLoaded ? "visible" : "hidden",
                         width: `${ImgSizes[imgIndex][0]}px`,
                         height: `${ImgSizes[imgIndex][1]}px`,
-                        cursor: "pointer"
+                        cursor: "pointer",
                     }}
                 />
             </div>
@@ -53,11 +54,10 @@ export default function MovieCard({ movie }: Props) {
                     <p>{movie.rating}</p>
                     <a href={movie.link}>IMDB</a>
                 </div>
-                <p>Your Stats:</p>
-                <p>2 Buttons to change your rating/status</p>
-                <p>- Rating: __</p>
-                <p>- Status: (Watched | Not Watched | Plan to watch)</p>
+                <AddMovieToListBtn />
             </div>
         </Paper>
     );
-}
+});
+
+export default MovieCard;

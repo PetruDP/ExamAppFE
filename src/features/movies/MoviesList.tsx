@@ -27,7 +27,7 @@ export default function MoviesList() {
     if (loading) {
         content = <CircularProgress className={s["loading-movies"]} />;
     } else if (error) {
-        content = <p>{error}</p>;
+        content = <p style={{ color: "red", fontWeight: "bold", fontSize: "1.25rem"}}>{error}</p>;
     } else if (movies) {
         containerClass = s["movies-list"];
         content = movies.map((el) => (

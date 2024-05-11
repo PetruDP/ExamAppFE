@@ -18,13 +18,14 @@ function App() {
                 <Route index element={<Home />}></Route>
                 <Route path="/login" element={<Login />}></Route>
                 <Route path="/register" element={<Register />}></Route>
-                <Route path="/movie/:id" element={<SingleMovie />}></Route>
 
-                {/* Protected Routes */}
+                {/* Protected Routes - Everyone allowed */}
                 <Route element={<RequireAuth roles={["User", "Admin"]} />}>
                     <Route path="/profile" element={<Profile />}></Route>
+                    <Route path="/movie/:id" element={<SingleMovie />}></Route>
                 </Route>
 
+                {/* Protected Routes - Admins only */}
                 <Route element={<RequireAuth roles={["Admin"]} />}>
                     <Route path="/admin" element={<AdminDashboard />}></Route>
                 </Route>

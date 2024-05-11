@@ -25,7 +25,7 @@ export function useFetchWrapper<T>() {
                 setError(error.message);
             }
             else {
-                setError("Failed to fetch resource");
+                setError("Failed to fetch resource (useFetchWrapper.ts)");
             }
         }
         finally {

@@ -17,7 +17,10 @@ export interface MovieI {
     Writers: string[];
     Stars: string[];
     genre: string[];
-    images: string[][];
+    images: {
+        width: string;
+        image: string;
+    }[];
     imdbid: string;
     rank: number;
     rating: string;
