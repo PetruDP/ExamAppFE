@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 type Props = {
     btnProps?: ButtonProps;
-    id?: string;
+    id: string;
 };
 
 export default function AddMovieToListBtn({ btnProps, id }: Props) {

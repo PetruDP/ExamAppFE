@@ -54,7 +54,7 @@ const MovieCard = React.memo(({ movie }: Props) => {
                     <p>{movie.rating}</p>
                     <a href={movie.link}>IMDB</a>
                 </div>
-                <AddMovieToListBtn />
+                <AddMovieToListBtn id={movie.id}/>
             </div>
         </Paper>
     );

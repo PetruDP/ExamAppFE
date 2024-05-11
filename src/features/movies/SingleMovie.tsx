@@ -94,7 +94,7 @@ export default function SingleMovie() {
                     />
                     <p className={s.synopsis}>{movie.description}</p>
                     <Divider />
-                    <AddMovieToListBtn />
+                    <AddMovieToListBtn id={movie.id}/>
                 </Paper>
             </>
         );
