@@ -16,6 +16,7 @@ export function useFetchWrapper<T>() {
     async function trigger(callback: () => Promise<T>) {
         setError("");
         setLoading(true);
+        setData(undefined);
         try {
             setData(await callback());
             setLoading(false);

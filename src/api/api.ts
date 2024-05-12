@@ -1,8 +1,14 @@
 import { store } from "../app/store";
-import { setMoviesList } from "../features/movies/moviesSlice";
+import { setMoviesList, setMyMovies } from "../features/movies/moviesSlice";
 import { setToken } from "../features/auth/authSlice";
 import { baseUrl, reqWithAuth } from "./config"
-// import { delay } from "./delay";
+import { delay } from "./delay";
+import { MovieI } from "../types/types";
+
+export interface StatusData {
+    status: number;
+    ok: boolean;
+}
 
 export const GETMovies = async () => {
     const res = await fetch(`${baseUrl}/movies`);
@@ -16,41 +22,45 @@ export const GETMovie = async (id: string) => {
     return await res.json();
 }
 
-// AUTH -------------------------------------------------------------------------------------------------
+// AUTH ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 export interface Login_Register_Payload {
     username: string;
     password: string;
 }
 // DONE!
-export const POSTRegister = async (payload: Login_Register_Payload ) => {
+export const POSTRegister = async (payload: Login_Register_Payload) => {
     console.log(payload);
     const res = await fetch(`${baseUrl}/register`);
     const { token } = await res.json() as { token: string };
-    if(res.ok) store.dispatch(setToken(token));
+    if (res.ok) store.dispatch(setToken(token));
     return { status: res.status, ok: res.ok };
 }
 // DONE!
 export const POSTLogin = async (payload: Login_Register_Payload) => {
     console.log(payload);
     const res = await fetch(`${baseUrl}/login`);
+    await delay(2, true);
     const { token } = await res.json() as { token: string };
-    if(res.ok) store.dispatch(setToken(token));
+    if (res.ok) store.dispatch(setToken(token));
     return { status: res.status, ok: res.ok };
 }
 
 // TBD
 export const POSTAddMovie = async (payload: { id: string }) => {
     console.log(payload);
-    const req = reqWithAuth(`${baseUrl}/movies`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-    });
-    const res = await fetch(req);
+    // const req = reqWithAuth(`${baseUrl}/movies`, {
+    //     method: "POST",
+    //     body: JSON.stringify(payload),
+    // }); 
+    // const res = await fetch(req);
+    const res = await fetch(`${baseUrl}/test`);
+    await delay(2, true);
     const json = await res.json();
     console.log(json);
     return { status: res.status, ok: res.ok }
 }
 
+// [USER] ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // [USER] Read user --> User reads his profile
 export const GETUser = async (payload: { username: string }) => {
     const req = reqWithAuth(`${baseUrl}/user/profile/${payload.username}`);
@@ -64,9 +74,32 @@ interface POSTUserUpdateUser {
 }
 export const POSTUserUpdateUser = async (payload: POSTUserUpdateUser) => {
     const req = reqWithAuth(`${baseUrl}/admin/update`);
-    const res = await fetch(req);
+    // const res = await fetch(req);
+    const res = await fetch(`${baseUrl}/test`);
+    await delay(2, true);
+    return { status: res.status, ok: res.ok } as StatusData
 }
 
+// [USER] Read my Movies List
+export const GETUsersMoviesList = async () => {
+    const req = reqWithAuth(`${baseUrl}`);
+    const res = await fetch(`${baseUrl}/movies`);
+    await delay(1);
+    const json = await res.json() as MovieI[];
+    store.dispatch(setMyMovies(json));
+    return json;
+}
+
+// [USER] Remove Movie from List
+export const DELETEUserMovie = async (payload: {}) => {
+    const req = reqWithAuth(`${baseUrl}`);
+    const res = await fetch(`${baseUrl}/test`);
+    await delay(2);
+    const json = await res.json();
+    return { status: res.status, ok: res.ok } as StatusData
+}
+
+// [ADMIN] ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // [ADMIN] Update User --> Admin updates a user's fields
 interface POSTAdminUpdateUserI {
 

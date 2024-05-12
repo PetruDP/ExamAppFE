@@ -3,11 +3,10 @@ import {
     Button,
     Tooltip,
     ButtonProps,
-    Snackbar,
-    Alert,
 } from "@mui/material";
 import { useFetchWrapper } from "../../api/useFetchWrapper";
-import { POSTAddMovie } from "../../api/api";
+import { POSTAddMovie, StatusData } from "../../api/api";
+import SnackResponse from "../../components/Utils/SnackResponse";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 type Props = {
@@ -16,26 +15,10 @@ type Props = {
 };
 
 export default function AddMovieToListBtn({ btnProps, id }: Props) {
-    const [snack, setSnack] = useState({
-        success: false,
-        error: false
-    });
-    const { error, data, trigger } = useFetchWrapper<{
-        status: number;
-        ok: boolean;
-    }>();
-
-    useEffect(() => {
-        if (data?.ok) setSnack((p) => ({ ...p, success: true }));
-        if (error) setSnack((p) => ({ ...p, error: true }));
-    }, [data, error]);
+    const { loading, error, data, trigger } = useFetchWrapper<StatusData>();
 
     function handleAddMovie() {
         trigger(() => POSTAddMovie({ id }));
-    }
-
-    function handleCloseSnackbar(type: keyof typeof snack) {
-        setSnack((p) => ({ ...p, [type]: false }));
     }
 
     return (
@@ -46,39 +29,23 @@ export default function AddMovieToListBtn({ btnProps, id }: Props) {
                     onClick={handleAddMovie}
                     sx={{ margin: "1.5rem 0 0 0" }}
                     variant="outlined"
+                    disabled={loading}
                     startIcon={<AddCircleOutlineIcon />}
                 >
-                    Add
+                    {loading ? "Loading" : "Add"}
                 </Button>
             </Tooltip>
-            <Snackbar
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                open={snack.error}
-                autoHideDuration={5000}
-                onClose={() => handleCloseSnackbar("error")}
-            >
-                <Alert
-                    onClose={() => handleCloseSnackbar("error")}
-                    severity="error"
-                    variant="filled"
-                >
-                    {error}
-                </Alert>
-            </Snackbar>
-            <Snackbar
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                open={snack.success}
-                autoHideDuration={5000}
-                onClose={() => handleCloseSnackbar("success")}
-            >
-                <Alert
-                    onClose={() => handleCloseSnackbar("success")}
-                    severity="success"
-                    variant="filled"
-                >
-                    Movie added succesfully!
-                </Alert>
-            </Snackbar>
+            <SnackResponse 
+                open={Boolean(data?.ok)}
+                message="Movie added succesfully!"
+            />
+            <SnackResponse 
+                open={Boolean(error)}
+                message={error}
+                alertProps={{
+                    severity: "error"
+                }}
+            />
         </>
     );
 }

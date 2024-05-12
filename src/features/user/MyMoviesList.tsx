@@ -1,8 +1,12 @@
 import s from "../../styles/Profile.module.scss";
 import { useEffect } from "react";
 import { useFetchWrapper } from "../../api/useFetchWrapper";
-import { GETMovies } from "../../api/api";
+import { GETUsersMoviesList } from "../../api/api";
 import { MovieI } from "../../types/types";
+import { CircularProgress } from "@mui/material";
+import MyMovieListCard from "./MyMovieListCard";
+import { useAppSelector } from "../../app/hooks";
+import { selectMyMovies } from "../movies/moviesSlice";
 
 type Props = {
     tabValue: number;
@@ -10,25 +14,41 @@ type Props = {
 };
 
 export default function MyMoviesList({ tabValue, tabIndex }: Props) {
-    const { loading, error, data, trigger } = useFetchWrapper<MovieI[]>();
+    const myMovies = useAppSelector(selectMyMovies);
+    const {
+        loading,
+        error,
+        data,
+        trigger,
+    } = useFetchWrapper<MovieI[]>();
 
     useEffect(() => {
-        trigger(GETMovies);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (myMovies.length === 0) {
+            trigger(GETUsersMoviesList);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
-    
+    let content;
+    if (loading) {
+        content = <CircularProgress sx={{ marginTop: "4rem" }} />;
+    } else if (error) {
+        content = <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
+    } else if (myMovies && myMovies.length > 0) {
+        content = myMovies.map((el) => (
+            <MyMovieListCard
+                key={el.id}
+                movie={el}
+            />
+        ));
+    }
 
     return (
         <div
             className={s.MyMoviesList}
             hidden={tabValue !== tabIndex}
         >
-            {tabValue === tabIndex && (
-                <div>
-                    <h1>My Movies List</h1>
-                </div>
-            )}
+            {tabValue === tabIndex && <div>{content}</div>}
         </div>
     );
 }

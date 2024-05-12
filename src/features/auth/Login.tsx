@@ -91,7 +91,7 @@ export default function Login() {
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={!form.username || !form.password}
+                        disabled={!form.username || !form.password || loading}
                     >
                         Login
                     </Button>

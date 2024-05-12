@@ -7,14 +7,20 @@ div.profile-container {
 
 div.ProfileContent,
 div.MyMoviesList {
-    margin: 1rem auto 0 auto;
+    margin: 0 auto;
+    padding-top: 1rem;
     max-width: 70rem;
     display: flex;
     flex-direction: column;
 
 }
 
-div.MyMoviesList {}
+div.MyMoviesList {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 div.ProfileContent {
 
@@ -26,7 +32,7 @@ div.ProfileContent {
             display: flex;
             flex-direction: column;
 
-            > button {
+            >button {
                 margin: 1rem 0 0 0;
             }
         }
@@ -36,7 +42,7 @@ div.ProfileContent {
         margin-top: 1rem;
 
         >form {
-            > p {
+            >p {
                 margin: 1rem 0 0 0;
             }
         }
@@ -47,5 +53,50 @@ div.ProfileContent {
         margin-top: 4rem;
 
         >form {}
+    }
+}
+
+.movieCard {
+    padding: 1rem;
+
+    &+& {
+        margin-top: 1rem;
+    }
+
+    >a {
+        &:nth-of-type(1) {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: .2rem 0 0 0;
+            color: black;
+            text-decoration: none;
+        }
+    }
+
+    >p {
+
+        &:nth-of-type(1) {
+            margin: .5rem 0 0 0;
+        }
+    }
+
+    >div.btns {
+        margin-top: 2rem;
+        display: flex;
+        align-items: flex-end;
+
+        >button {
+            margin-left: auto;
+        }
+
+        >select {
+            padding: 0.25rem .5rem;
+            border-radius: .25rem;
+            border: 1px solid rgba(25, 118, 210, 0.5);
+
+            &:focus {
+                outline: 2px solid rgba(25, 118, 210, 0.5);
+            }
+        }
     }
 }

@@ -65,7 +65,7 @@ export default function PasswordInputWithRegex({
                                 AT_LEAST_8_32.test(password) ? s["ok"] : ""
                             }
                         >
-                            At least 8 characters long
+                            8 to 32 characters
                         </span>
                     </span>
                 )

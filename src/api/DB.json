@@ -1,4 +1,7 @@
 {
+    "test": {
+        "message": "OK"
+    },
     "login": {
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VybmFtZSI6IkpvaG4iLCJSb2xlIjoiVXNlciJ9.s0idRMHRx79kMvYPb5g_iQAJz90NWDqyzHLZPb_Xeo8"
     },

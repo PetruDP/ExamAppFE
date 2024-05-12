@@ -66,7 +66,7 @@ export default function Register() {
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={!form.username || !form.password}
+                        disabled={!form.username || !form.password || loading}
                     >
                         Register
                     </Button>
