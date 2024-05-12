@@ -51,16 +51,36 @@ export const POSTAddMovie = async (payload: { id: string }) => {
     return { status: res.status, ok: res.ok }
 }
 
-// Read user
+// [USER] Read user --> User reads his profile
 export const GETUser = async (payload: { username: string }) => {
     const req = reqWithAuth(`${baseUrl}/user/profile/${payload.username}`);
     const res = await fetch(req);
     return await res.json();
 }
 
-// Read All Users --> ONly ADMIN
+// [USER] Update User --> User updates his profile (username/password)
+interface POSTUserUpdateUser {
+
+}
+export const POSTUserUpdateUser = async (payload: POSTUserUpdateUser) => {
+    const req = reqWithAuth(`${baseUrl}/admin/update`);
+    const res = await fetch(req);
+}
+
+// [ADMIN] Update User --> Admin updates a user's fields
+interface POSTAdminUpdateUserI {
+
+}
+export const POSTAdminUpdateUser = async (payload: POSTUpdateUserI) => {
+    const req = reqWithAuth(`${baseUrl}/admin/update`);
+    const res = await fetch(req);
+}
+
+// [ADMIN] Read All Users --> Admin receives a list of all users
 export const GETUsers = async () => {
     const req = reqWithAuth(`${baseUrl}/admin/getUsers`);
     const res = await fetch(req);
     return await res.json();
 }
+
+// 

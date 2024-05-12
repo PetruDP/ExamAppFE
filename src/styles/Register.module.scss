@@ -33,21 +33,21 @@ div.register {
             }
         }
     }
+}
 
-    span.helperText {
-        font-size: 14px;
-        > span {
-            display: block;
-            margin-left: .55rem;
-            &:nth-of-type(1) {
-                margin: .15rem 0 0 0;
-                font-weight: bold;
-            }
-
+span.helperText {
+    font-size: 14px;
+    > span {
+        display: block;
+        margin-left: .55rem;
+        &:nth-of-type(1) {
+            margin: .15rem 0 0 0;
+            font-weight: bold;
         }
 
-        span.ok {
-            color: rgb(0, 168, 0);
-        }
+    }
+
+    span.ok {
+        color: rgb(0, 168, 0);
     }
 }

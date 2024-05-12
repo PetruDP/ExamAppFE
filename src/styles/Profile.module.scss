@@ -1,3 +1,51 @@
 div.profile-container {
-    
+    >div.tabs {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+div.ProfileContent,
+div.MyMoviesList {
+    margin: 1rem auto 0 auto;
+    max-width: 70rem;
+    display: flex;
+    flex-direction: column;
+
+}
+
+div.MyMoviesList {}
+
+div.ProfileContent {
+
+    div.username,
+    div.password {
+        display: flex;
+
+        >form {
+            display: flex;
+            flex-direction: column;
+
+            > button {
+                margin: 1rem 0 0 0;
+            }
+        }
+    }
+
+    div.username {
+        margin-top: 1rem;
+
+        >form {
+            > p {
+                margin: 1rem 0 0 0;
+            }
+        }
+    }
+
+
+    div.password {
+        margin-top: 4rem;
+
+        >form {}
+    }
 }
