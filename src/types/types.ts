@@ -1,6 +1,7 @@
-import { Roles } from "./constants";
+import { Roles, MovieStatuses } from "./constants";
 
 export type Roles = typeof Roles[keyof typeof Roles];
+export type MovieStatus = typeof MovieStatuses[number];
 
 export interface JWTPayload {
     Username: string;
@@ -13,10 +14,22 @@ export interface MovieI {
     title: string;
     description: string;
     link: string;
-    Director: string[];
-    Writers: string[];
-    Stars: string[];
-    genre: string[];
+    director: {
+        id: number;
+        name: string;
+    }[];
+    writers: {
+        id: number;
+        name: string;
+    }[];
+    stars: {
+        id: number;
+        name: string;
+    }[];
+    genre: {
+        id: number;
+        name: string;
+    }[];
     images: {
         width: string;
         image: string;
@@ -25,4 +38,5 @@ export interface MovieI {
     rank: number;
     rating: string;
     year: string;
+    movieStatus: MovieStatus 
 }

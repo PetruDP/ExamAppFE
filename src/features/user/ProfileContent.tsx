@@ -33,14 +33,18 @@ export default function ProfileContent({ tabValue, tabIndex }: Props) {
         trigger: t2,
     } = useFetchWrapper<StatusData>();
 
-    function handleUpdateUsername(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        t1(() => POSTUserUpdateUser({}));
+    function handleUpdateUsername(){
+        t1(() => POSTUserUpdateUser({ 
+            username: user
+        }));
     }
 
     function handleUpdatePassword(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        t2(() => POSTUserUpdateUser({}));
+        t2(() => POSTUserUpdateUser({
+            oldPassword: oldPass,
+            newPassword: pass
+        }));
     }
 
     return (
@@ -51,7 +55,7 @@ export default function ProfileContent({ tabValue, tabIndex }: Props) {
             {tabValue === tabIndex && (
                 <div>
                     <div className={s.username}>
-                        <form onSubmit={handleUpdateUsername}>
+                        <form>
                             <h2>Change Username</h2>
                             <p>Current Username: {Username}</p>
                             <UsernameInputWithRegex
@@ -62,7 +66,7 @@ export default function ProfileContent({ tabValue, tabIndex }: Props) {
                                 onChange={(e) => setUser(e.target.value)}
                             />
                             <Button
-                                type="submit"
+                                onClick={handleUpdateUsername}
                                 disabled={!USERNAME_REGEX.test(user) || l1}
                             >
                                 {l1 ? "LOADING" : "CHANGE"}

@@ -12,6 +12,8 @@ export default function RequireAuth({ roles }: Props) {
     const token = useAppSelector(selectToken);
     const { Role } = useAppSelector(selectJWTDecoded);
     const grantAccess = token && Role && roles.includes(Role);
+    console.log(Role);
+    if(!grantAccess) console.log("User not authorized to access route");
     
     const content = grantAccess ? (
         <Outlet />

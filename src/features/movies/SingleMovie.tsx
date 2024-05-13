@@ -21,7 +21,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export default function SingleMovie() {
     const { id } = useParams();
     const { loading, error, data: movie, trigger } = useFetchWrapper<MovieI>();
-
+     
     useEffect(() => {
         if (id) trigger(() => GETMovie(id));
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,23 +79,23 @@ export default function SingleMovie() {
                     <div className={s.genres}>
                         {movie.genre.map((el) => (
                             <Chip
-                                key={el}
-                                label={el}
+                                key={el.id}
+                                label={el.name}
                                 variant="outlined"
                             />
                         ))}
                     </div>
                     <AccordionGenerator
                         title="Director"
-                        el={movie.Director}
+                        el={movie.director}
                     />
                     <AccordionGenerator
                         title="Writes"
-                        el={movie.Writers}
+                        el={movie.writers}
                     />
                     <AccordionGenerator
                         title="Main Actors"
-                        el={movie.Stars}
+                        el={movie.stars}
                     />
                     <div className={s.synopsis}>
                         <p>Synopsis</p>
@@ -110,8 +110,9 @@ export default function SingleMovie() {
     return <div className={s.SingleMovie}>{content}</div>;
 }
 
-function AccordionGenerator({ title, el }: { title: string; el: string[] }) {
+function AccordionGenerator({ title, el }: { title: string; el: { id: number, name: string }[] }) {
     const theme = useTheme() as { palette: { divider: string } };
+
     return (
         <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -128,17 +129,17 @@ function AccordionGenerator({ title, el }: { title: string; el: string[] }) {
                 {el.map((el) => (
                     <Tooltip
                         title="Click to open search on Google"
-                        key={`${el}-${title}`}
+                        key={`${el.id}-${title}`}
                     >
                         <a
-                            href={`https://www.google.com/search?q=${el}`}
+                            href={`https://www.google.com/search?q=${el.name}`}
                             target="_blank"
                             // style={{ display: "block", width: "fit-content" }}
                             // Above line makes the tooltip appear on the center of the text
                             // But doing this will make the bellow link harder to select
                             // Because the tooltip sits on top of it
                         >
-                            <p style={{ margin: ".5rem 0", width: "fit-content" }}>{el}</p>
+                            <p style={{ margin: ".5rem 0", width: "fit-content" }}>{el.name}</p>
                         </a>
                     </Tooltip>
                 ))}

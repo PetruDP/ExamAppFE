@@ -1,6 +1,6 @@
-import { store } from "../app/store";
+let baseUrl: string = "http://localhost:8080";
 
-let baseUrl: string = "http://localhost:3001";
+import { store } from "../app/store";
 
 type ReqWithAuth = (url: string, init?: RequestInit) => Request;
 /**
@@ -10,7 +10,8 @@ const reqWithAuth: ReqWithAuth = (url, init) => {
     const { auth } = store.getState();
     return new Request(url, {
         headers: {
-            "Authorization": `Bearer ${auth.auth.token}`
+            "Authorization": `Bearer ${auth.auth.token}`,
+            "Content-Type": "application/json"
         },
         credentials: "include",
         ...init

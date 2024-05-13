@@ -1,10 +1,13 @@
 import s from "../../styles/Profile.module.scss";
 import { useState, useEffect } from "react";
 import { useFetchWrapper } from "../../api/useFetchWrapper";
-import { DELETEUserMovie, StatusData, GETUsersMoviesList } from "../../api/api";
+import { DELETEUserMovie, StatusData, GETUser, PATCHUpdateStatus } from "../../api/api";
 import { Link } from "react-router-dom";
-import { MovieI } from "../../types/types";
+import { MovieI, MovieStatus } from "../../types/types";
 import { Paper, Tooltip, Button } from "@mui/material";
+import { useAppSelector } from "../../app/hooks";
+import { MovieStatuses } from "../../types/constants";
+import { selectJWTDecoded } from "../auth/authSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SnackResponse from "../../components/Utils/SnackResponse";
 
@@ -13,21 +16,24 @@ type Props = {
 };
 
 export default function MyMovieListCard({ movie }: Props) {
-    const [status, setStatus] = useState("Not Watched");
+    const { Username } = useAppSelector(selectJWTDecoded);
+    const [status, setStatus] = useState<MovieStatus>("NOT WATCHED");
     const { loading, error, data, trigger } = useFetchWrapper<StatusData>();
     const { trigger: getMyMovies } = useFetchWrapper();
 
+    // Watch for updates to movies list updates and refetch my movies list
     useEffect(() => {
-        if(data?.ok) getMyMovies(GETUsersMoviesList);
+        if(data?.ok) getMyMovies(() => GETUser({ username: Username }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
 
     function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        setStatus(e.target.value as string);
+        setStatus(e.target.value as MovieStatus);
+        trigger(() => PATCHUpdateStatus({ movieId: movie.id, movieStatus: status }))
     }
 
     function handleRemoveMovie() {
-        trigger(() => DELETEUserMovie({}));
+        trigger(() => DELETEUserMovie({ movieId: movie.id }));
     }
 
     return (
@@ -56,9 +62,9 @@ export default function MyMovieListCard({ movie }: Props) {
                     value={status}
                     onChange={handleStatusChange}
                 >
-                    <option value="Not Watched">Not Watched</option>
-                    <option value="Watched">Watched</option>
-                    <option value="Plan to Watch">Plan to Watch</option>
+                    {MovieStatuses.map((el) => (
+                        <option key={el} value={el}>{el}</option>
+                    ))}
                 </select>
                 <Tooltip title="Remove movie from your list">
                     <Button

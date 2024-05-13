@@ -3,7 +3,7 @@ import { setMoviesList, setMyMovies } from "../features/movies/moviesSlice";
 import { setToken } from "../features/auth/authSlice";
 import { baseUrl, reqWithAuth } from "./config"
 import { delay } from "./delay";
-import { MovieI } from "../types/types";
+import { MovieI, MovieStatus } from "../types/types";
 
 export interface StatusData {
     status: number;
@@ -11,15 +11,23 @@ export interface StatusData {
 }
 
 export const GETMovies = async () => {
-    const res = await fetch(`${baseUrl}/movies`);
+    const res = await fetch(`${baseUrl}/movie/top100`);
     const json = await res.json()
-    store.dispatch(setMoviesList(json));
-    return json
+    if(res.ok) { 
+        store.dispatch(setMoviesList(json)); 
+        return json
+    }
+    else {
+        return undefined
+    }
 }
 
 export const GETMovie = async (id: string) => {
-    const res = await fetch(`${baseUrl}/movies/${id}`);
-    return await res.json();
+    const res = await fetch(`${baseUrl}/movie/${id}`);
+    if(res.ok) {
+        return await res.json();
+    }
+    else return undefined
 }
 
 // AUTH ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,74 +37,112 @@ export interface Login_Register_Payload {
 }
 // DONE!
 export const POSTRegister = async (payload: Login_Register_Payload) => {
-    console.log(payload);
-    const res = await fetch(`${baseUrl}/register`);
-    const { token } = await res.json() as { token: string };
-    if (res.ok) store.dispatch(setToken(token));
+    const res = await fetch(`${baseUrl}/authentication/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    const json = await res.json() as { token: string };
+    if (res.ok) {
+        store.dispatch(setToken(json.token));
+    }
+    console.log(json)
     return { status: res.status, ok: res.ok };
 }
 // DONE!
 export const POSTLogin = async (payload: Login_Register_Payload) => {
-    console.log(payload);
-    const res = await fetch(`${baseUrl}/login`);
-    await delay(2, true);
-    const { token } = await res.json() as { token: string };
-    if (res.ok) store.dispatch(setToken(token));
+    const res = await fetch(`${baseUrl}/authentication/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    const json = await res.json() as any;
+    if (res.ok) store.dispatch(setToken(json.token));
+    if(!res.ok){
+        throw Error(json.error)
+    }
     return { status: res.status, ok: res.ok };
 }
 
-// TBD
+// [USER] ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// [USER] ADdd movie to list reqeust
 export const POSTAddMovie = async (payload: { id: string }) => {
-    console.log(payload);
-    // const req = reqWithAuth(`${baseUrl}/movies`, {
-    //     method: "POST",
-    //     body: JSON.stringify(payload),
-    // }); 
-    // const res = await fetch(req);
-    const res = await fetch(`${baseUrl}/test`);
-    await delay(2, true);
-    const json = await res.json();
-    console.log(json);
-    return { status: res.status, ok: res.ok }
+    const req = reqWithAuth(`${baseUrl}/profile/add/${payload.id}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    }); 
+    const res = await fetch(req);
+    if(res.ok) return { status: res.status, ok: res.ok }
+    else throw Error(`Failed to add movie`)
 }
 
-// [USER] ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// [USER] Read user --> User reads his profile
+// [USER] Read user --> Returns user profile with movies list
+export interface GETUserI {
+    username: string;
+    userMovies: {
+        movie: MovieI
+    }[]
+}
 export const GETUser = async (payload: { username: string }) => {
-    const req = reqWithAuth(`${baseUrl}/user/profile/${payload.username}`);
+    const req = reqWithAuth(`${baseUrl}/profile/${payload.username}`);
     const res = await fetch(req);
-    return await res.json();
+    const json = await res.json() as any;
+    if(res.ok) {store.dispatch(setMyMovies(json.userMovies.map((el: GETUserI["userMovies"][number]) => {
+        return { ...el.movie }
+        })))
+        return json
+    }
+    else {
+        throw Error(`Failed to fetch user profile: ${json.error}`)
+    }
+
 }
 
 // [USER] Update User --> User updates his profile (username/password)
 interface POSTUserUpdateUser {
-
+    username?: string;
+    oldPassword?: string;
+    newPassword?: string;
 }
 export const POSTUserUpdateUser = async (payload: POSTUserUpdateUser) => {
-    const req = reqWithAuth(`${baseUrl}/admin/update`);
-    // const res = await fetch(req);
-    const res = await fetch(`${baseUrl}/test`);
-    await delay(2, true);
-    return { status: res.status, ok: res.ok } as StatusData
-}
-
-// [USER] Read my Movies List
-export const GETUsersMoviesList = async () => {
-    const req = reqWithAuth(`${baseUrl}`);
-    const res = await fetch(`${baseUrl}/movies`);
-    await delay(1);
-    const json = await res.json() as MovieI[];
-    store.dispatch(setMyMovies(json));
-    return json;
+    const req = reqWithAuth(`${baseUrl}/profile/update`, {
+        method: "POST",
+        body: JSON.stringify(payload)
+    });
+    const res = await fetch(req);
+    const json = await res.json();
+    if(res.ok) {
+        store.dispatch(setToken(json.token))
+        return { status: res.status, ok: res.ok } as StatusData
+    }
+    else {
+        throw Error(`Failed to update user: ${json.error}`)
+    }
 }
 
 // [USER] Remove Movie from List
-export const DELETEUserMovie = async (payload: {}) => {
-    const req = reqWithAuth(`${baseUrl}`);
-    const res = await fetch(`${baseUrl}/test`);
-    await delay(2);
-    const json = await res.json();
-    return { status: res.status, ok: res.ok } as StatusData
+export const DELETEUserMovie = async (payload: { movieId: string }) => {
+    const req = reqWithAuth(`${baseUrl}/profile/remove/${payload.movieId}`, {
+        method: "DELETE"
+    }); 
+    const res = await fetch(req);
+    if(res.ok) return { status: res.status, ok: res.ok } as StatusData;
+    else throw Error("Failed to delete movie from list");
+}
+
+// [USER] Update the status of a movie from my movies list
+export const PATCHUpdateStatus = async (payload: { movieId: string, movieStatus: MovieStatus }) => {
+    const req = reqWithAuth(`${baseUrl}/profile/update/movie`, {
+        method: "PATCH",
+        body: JSON.stringify(payload)
+    });
+    const res = await fetch(req);
+    if(res.ok) return { status: res.status, ok: res.ok };
+    else throw Error("Failed to update movie status");
 }
 
 // [ADMIN] ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +150,7 @@ export const DELETEUserMovie = async (payload: {}) => {
 interface POSTAdminUpdateUserI {
 
 }
-export const POSTAdminUpdateUser = async (payload: POSTUpdateUserI) => {
+export const POSTAdminUpdateUser = async (payload: POSTAdminUpdateUserI) => {
     const req = reqWithAuth(`${baseUrl}/admin/update`);
     const res = await fetch(req);
 }

@@ -1,7 +1,9 @@
 export const Roles = {
-    user: "User",
-    admin: "Admin"
+    user: "USER",
+    admin: "ADMIN"
 } as const
+
+export const MovieStatuses = ["NOT WATCHED", "WATCHED"] as const;
 
 export const ImgSizes = {
     0: [190, 281],

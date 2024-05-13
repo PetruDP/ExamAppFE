@@ -1,12 +1,13 @@
 import s from "../../styles/Profile.module.scss";
 import { useEffect } from "react";
 import { useFetchWrapper } from "../../api/useFetchWrapper";
-import { GETUsersMoviesList } from "../../api/api";
+import { GETUser, GETUserI } from "../../api/api";
 import { MovieI } from "../../types/types";
 import { CircularProgress } from "@mui/material";
 import MyMovieListCard from "./MyMovieListCard";
 import { useAppSelector } from "../../app/hooks";
 import { selectMyMovies } from "../movies/moviesSlice";
+import { selectJWTDecoded } from "../auth/authSlice";
 
 type Props = {
     tabValue: number;
@@ -14,20 +15,21 @@ type Props = {
 };
 
 export default function MyMoviesList({ tabValue, tabIndex }: Props) {
+    const { Username } = useAppSelector(selectJWTDecoded);
     const myMovies = useAppSelector(selectMyMovies);
     const {
         loading,
         error,
         data,
         trigger,
-    } = useFetchWrapper<MovieI[]>();
+    } = useFetchWrapper<GETUserI | undefined>();
 
     useEffect(() => {
         if (myMovies.length === 0) {
-            trigger(GETUsersMoviesList);
+            trigger(() => GETUser({ username: Username }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data]);
+    }, []);
 
     let content;
     if (loading) {
